@@ -1,0 +1,21 @@
+services:
+  db:
+    container_name: ecommerce_postgres
+    image: postgres:17.5
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin@123
+      POSTGRES_DB: ecommerce_db
+    volumes:
+      - postgres_data:/var/lib/ecommerce/postgres/data
+    networks:
+      - backend_net
+
+networks:
+  backend_net:
+    driver: bridge
+
+volumes:
+  postgres_data:

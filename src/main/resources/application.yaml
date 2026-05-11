@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: ecommerce-backend
+
+  profiles:
+    active: dev
+
+  mvc:
+    problemdetails:
+      enabled: true
+
+payment:
+  expiration:
+    lifetime: 5m
+    check-delay: 60s

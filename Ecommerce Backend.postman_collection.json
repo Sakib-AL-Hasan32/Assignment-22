@@ -1,0 +1,1935 @@
+{
+  "info": {
+    "_postman_id": "e34907cf-2ce3-4474-b845-a2d153980177",
+    "name": "Ecommerce Backend",
+    "description": "Professional Postman collection for testing and demoing the ecommerce backend endpoints. Requests are grouped by feature package and can be run in order for category, product, and inventory flows.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "3537602"
+  },
+  "item": [
+    {
+      "name": "Category",
+      "item": [
+        {
+          "name": "Happy Path",
+          "item": [
+            {
+              "name": "Create Category",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "const uniqueSuffix = Date.now();",
+                      "pm.collectionVariables.set('CATEGORY_NAME', 'Premium Home Appliances');",
+                      "pm.collectionVariables.set('CATEGORY_CODE', `HOME-APPLIANCES-${uniqueSuffix}`);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();",
+                      "pm.collectionVariables.set('CATEGORY_ID', response.data.id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"{{CATEGORY_NAME}}\",\n  \"code\": \"{{CATEGORY_CODE}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/categories",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "categories"
+                  ]
+                },
+                "description": "Creates a new product category using a unique professional business code."
+              },
+              "response": []
+            },
+            {
+              "name": "List Categories",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/categories?page=0&size=10",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "categories"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                },
+                "description": "Retrieves categories using zero-based pagination."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Category - Duplicate Code",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "if (!pm.collectionVariables.get('CATEGORY_CODE')) {",
+                      "    throw new Error('Run Create Category before this request so CATEGORY_CODE is available.');",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Duplicate Home Appliances\",\n  \"code\": \"{{CATEGORY_CODE}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/categories",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "categories"
+                  ]
+                },
+                "description": "Validates unique category code handling while the created category still exists."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Category By ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/categories/{{CATEGORY_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "categories",
+                    "{{CATEGORY_ID}}"
+                  ]
+                },
+                "description": "Retrieves the category created earlier in the collection run."
+              },
+              "response": []
+            },
+            {
+              "name": "Update Category",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "pm.collectionVariables.set('UPDATED_CATEGORY_NAME', 'Smart Home Appliances');"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"{{UPDATED_CATEGORY_NAME}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/categories/{{CATEGORY_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "categories",
+                    "{{CATEGORY_ID}}"
+                  ]
+                },
+                "description": "Updates the category name while preserving the business code."
+              },
+              "response": []
+            },
+            {
+              "name": "Deactivate Category",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/categories/{{CATEGORY_ID}}/status?isActive=false",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "categories",
+                    "{{CATEGORY_ID}}",
+                    "status"
+                  ],
+                  "query": [
+                    {
+                      "key": "isActive",
+                      "value": "false"
+                    }
+                  ]
+                },
+                "description": "Sets the category active flag to false."
+              },
+              "response": []
+            },
+            {
+              "name": "Activate Category",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/categories/{{CATEGORY_ID}}/status?isActive=true",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "categories",
+                    "{{CATEGORY_ID}}",
+                    "status"
+                  ],
+                  "query": [
+                    {
+                      "key": "isActive",
+                      "value": "true"
+                    }
+                  ]
+                },
+                "description": "Sets the category active flag back to true."
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Category",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.collectionVariables.unset('CATEGORY_ID');"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/categories/{{CATEGORY_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "categories",
+                    "{{CATEGORY_ID}}"
+                  ]
+                },
+                "description": "Permanently deletes the category created during the collection run."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Validation And Error Scenarios",
+          "item": [
+            {
+              "name": "Create Category - Missing Code",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Professional Audio Equipment\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/categories",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "categories"
+                  ]
+                },
+                "description": "Validates that category code is required."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Category - Not Found",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/categories/{{NON_EXISTING_CATEGORY_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "categories",
+                    "{{NON_EXISTING_CATEGORY_ID}}"
+                  ]
+                },
+                "description": "Verifies not-found behavior for an unknown category id."
+              },
+              "response": []
+            },
+            {
+              "name": "Update Category - Blank Name",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/categories/{{NON_EXISTING_CATEGORY_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "categories",
+                    "{{NON_EXISTING_CATEGORY_ID}}"
+                  ]
+                },
+                "description": "Validates that category name is required for updates."
+              },
+              "response": []
+            },
+            {
+              "name": "Toggle Category Status - Missing isActive",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/categories/{{NON_EXISTING_CATEGORY_ID}}/status",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "categories",
+                    "{{NON_EXISTING_CATEGORY_ID}}",
+                    "status"
+                  ]
+                },
+                "description": "Validates that isActive query parameter is required."
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Product",
+      "item": [
+        {
+          "name": "Happy Path",
+          "item": [
+            {
+              "name": "Create Product",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "if (!pm.collectionVariables.get('CATEGORY_ID')) {",
+                      "    throw new Error('Run Category / Happy Path / Create Category before creating a product.');",
+                      "}",
+                      "const uniqueSuffix = Date.now();",
+                      "pm.collectionVariables.set('PRODUCT_SKU', `KETTLE-${uniqueSuffix}`);",
+                      "pm.collectionVariables.set('PRODUCT_NAME', 'Smart Stainless Steel Kettle');"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();",
+                      "pm.collectionVariables.set('PRODUCT_ID', response.data.id);"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/products",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ]
+                },
+                "description": "Creates a product using the category created earlier in the demo flow.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sku\": \"{{PRODUCT_SKU}}\",\n  \"name\": \"{{PRODUCT_NAME}}\",\n  \"description\": \"Ergonomic stainless steel smart kettle for premium kitchen setups.\",\n  \"price\": 129.99,\n  \"isActive\": true,\n  \"categoryId\": {{CATEGORY_ID}},\n  \"imageUrl\": \"https://example.com/products/{{PRODUCT_SKU}}.jpg\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "List Products",
+              "event": [],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/products?page=0&size=10",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                },
+                "description": "Retrieves product catalog items using zero-based pagination."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Product - Duplicate SKU",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "if (!pm.collectionVariables.get('PRODUCT_SKU')) {",
+                      "    throw new Error('Run Create Product before this request so PRODUCT_SKU is available.');",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/products",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ]
+                },
+                "description": "Validates unique SKU handling while the created product still exists.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sku\": \"{{PRODUCT_SKU}}\",\n  \"name\": \"Duplicate Smart Kettle\",\n  \"description\": \"Attempts to reuse the existing SKU.\",\n  \"price\": 119.99,\n  \"isActive\": true,\n  \"categoryId\": {{CATEGORY_ID}},\n  \"imageUrl\": \"https://example.com/products/duplicate-kettle.jpg\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Product By ID",
+              "event": [],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/products/{{PRODUCT_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "{{PRODUCT_ID}}"
+                  ]
+                },
+                "description": "Retrieves the product created earlier in the collection run."
+              },
+              "response": []
+            },
+            {
+              "name": "Update Product",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "pm.collectionVariables.set('UPDATED_PRODUCT_NAME', 'Smart Stainless Steel Kettle Pro');"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/products/{{PRODUCT_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "{{PRODUCT_ID}}"
+                  ]
+                },
+                "description": "Updates editable product details while keeping the SKU immutable.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"{{UPDATED_PRODUCT_NAME}}\",\n  \"description\": \"Updated premium kettle with app-controlled temperature presets.\",\n  \"price\": 149.99,\n  \"isActive\": true,\n  \"categoryId\": {{CATEGORY_ID}},\n  \"imageUrl\": \"https://example.com/products/{{PRODUCT_SKU}}-pro.jpg\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Product",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.collectionVariables.unset('PRODUCT_ID');"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/products/{{PRODUCT_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "{{PRODUCT_ID}}"
+                  ]
+                },
+                "description": "Permanently deletes the product created during the product-only flow."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Validation And Error Scenarios",
+          "item": [
+            {
+              "name": "Create Product - Missing SKU",
+              "event": [],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/products",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ]
+                },
+                "description": "Validates that product SKU is required.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Smart Rice Cooker\",\n  \"description\": \"Missing required SKU.\",\n  \"price\": 89.99,\n  \"isActive\": true,\n  \"categoryId\": {{CATEGORY_ID}},\n  \"imageUrl\": \"https://example.com/products/rice-cooker.jpg\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Product - Invalid Category",
+              "event": [],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/products",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products"
+                  ]
+                },
+                "description": "Verifies not-found behavior when creating a product for an unknown category.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sku\": \"INVALID-CATEGORY-{{PRODUCT_SKU}}\",\n  \"name\": \"Invalid Category Product\",\n  \"description\": \"References a category id that should not exist.\",\n  \"price\": 59.99,\n  \"isActive\": true,\n  \"categoryId\": {{NON_EXISTING_CATEGORY_ID}},\n  \"imageUrl\": \"https://example.com/products/invalid-category.jpg\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Product - Not Found",
+              "event": [],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/products/{{NON_EXISTING_PRODUCT_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "{{NON_EXISTING_PRODUCT_ID}}"
+                  ]
+                },
+                "description": "Verifies not-found behavior for an unknown product id."
+              },
+              "response": []
+            },
+            {
+              "name": "Update Product - Blank Name",
+              "event": [],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/products/{{NON_EXISTING_PRODUCT_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "{{NON_EXISTING_PRODUCT_ID}}"
+                  ]
+                },
+                "description": "Validates that product name is required for updates.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"\",\n  \"description\": \"Blank product name should fail validation.\",\n  \"price\": 49.99,\n  \"isActive\": true,\n  \"categoryId\": {{CATEGORY_ID}},\n  \"imageUrl\": \"https://example.com/products/blank-name.jpg\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Product - Negative Price",
+              "event": [],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/products/{{NON_EXISTING_PRODUCT_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "products",
+                    "{{NON_EXISTING_PRODUCT_ID}}"
+                  ]
+                },
+                "description": "Validates that product price must be greater than zero.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Invalid Price Product\",\n  \"description\": \"Negative price should fail validation.\",\n  \"price\": -10.00,\n  \"isActive\": true,\n  \"categoryId\": {{CATEGORY_ID}},\n  \"imageUrl\": \"https://example.com/products/invalid-price.jpg\"\n}"
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Happy Path",
+          "item": [
+            {
+              "name": "Create Inventory",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "if (!pm.collectionVariables.get('PRODUCT_ID')) {",
+                      "    throw new Error('Run Product / Demo Setup / Create Product For Inventory Demo before creating inventory.');",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();",
+                      "pm.collectionVariables.set('INVENTORY_ID', response.data.id);",
+                      "pm.collectionVariables.set('INVENTORY_PRODUCT_ID', response.data.productId || pm.collectionVariables.get('PRODUCT_ID'));"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory"
+                  ]
+                },
+                "description": "Creates inventory for the product created earlier in the demo flow.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"productId\": {{PRODUCT_ID}},\n  \"totalQuantity\": 100\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Inventory By Product ID",
+              "event": [],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory/{{PRODUCT_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory",
+                    "{{PRODUCT_ID}}"
+                  ]
+                },
+                "description": "Retrieves inventory by product id."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Inventory - Duplicate Product",
+              "event": [],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory"
+                  ]
+                },
+                "description": "Validates that each product can have only one inventory record.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"productId\": {{PRODUCT_ID}},\n  \"totalQuantity\": 25\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Increase Inventory",
+              "event": [],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory/{{PRODUCT_ID}}/increase",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory",
+                    "{{PRODUCT_ID}}",
+                    "increase"
+                  ]
+                },
+                "description": "Adds quantity to total inventory.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quantity\": 10\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Reserve Inventory",
+              "event": [],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory/{{PRODUCT_ID}}/reserve",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory",
+                    "{{PRODUCT_ID}}",
+                    "reserve"
+                  ]
+                },
+                "description": "Moves available quantity into reserved inventory.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quantity\": 2\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Release Inventory",
+              "event": [],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory/{{PRODUCT_ID}}/release",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory",
+                    "{{PRODUCT_ID}}",
+                    "release"
+                  ]
+                },
+                "description": "Moves reserved quantity back into available inventory.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quantity\": 1\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Decrease Inventory",
+              "event": [],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory/{{PRODUCT_ID}}/decrease",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory",
+                    "{{PRODUCT_ID}}",
+                    "decrease"
+                  ]
+                },
+                "description": "Subtracts quantity from total inventory without violating reserved stock.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quantity\": 5\n}"
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Validation And Error Scenarios",
+          "item": [
+            {
+              "name": "Create Inventory - Missing Product ID",
+              "event": [],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory"
+                  ]
+                },
+                "description": "Validates that productId is required.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"totalQuantity\": 100\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Inventory - Negative Quantity",
+              "event": [],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory"
+                  ]
+                },
+                "description": "Validates that total inventory quantity cannot be negative.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"productId\": {{PRODUCT_ID}},\n  \"totalQuantity\": -1\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Inventory - Not Found",
+              "event": [],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory/{{NON_EXISTING_PRODUCT_ID}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory",
+                    "{{NON_EXISTING_PRODUCT_ID}}"
+                  ]
+                },
+                "description": "Verifies not-found behavior for inventory of an unknown product id."
+              },
+              "response": []
+            },
+            {
+              "name": "Increase Inventory - Zero Quantity",
+              "event": [],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory/{{PRODUCT_ID}}/increase",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory",
+                    "{{PRODUCT_ID}}",
+                    "increase"
+                  ]
+                },
+                "description": "Validates that adjustment quantity must be greater than zero.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quantity\": 0\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Reserve Inventory - Too Much Quantity",
+              "event": [],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory/{{PRODUCT_ID}}/reserve",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory",
+                    "{{PRODUCT_ID}}",
+                    "reserve"
+                  ]
+                },
+                "description": "Validates insufficient available stock handling.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quantity\": 999999\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Release Inventory - Too Much Quantity",
+              "event": [],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/inventory/{{PRODUCT_ID}}/release",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "inventory",
+                    "{{PRODUCT_ID}}",
+                    "release"
+                  ]
+                },
+                "description": "Validates release handling when requested quantity exceeds reserved stock.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quantity\": 999999\n}"
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Add Item To Cart",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (!pm.collectionVariables.get('PRODUCT_ID')) {",
+                  "    throw new Error('Run Product / Demo Setup / Create Product For Inventory Demo and Inventory / Happy Path / Create Inventory first.');",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "pm.collectionVariables.set('CART_ID', response.data.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/cart/items",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items"
+              ]
+            },
+            "description": "Adds an active product to the current user cart after checking available inventory.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{PRODUCT_ID}},\n  \"quantity\": 2\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current Cart",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/cart",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart"
+              ]
+            },
+            "description": "Retrieves the current user cart including item totals."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Item To Cart - Insufficient Stock",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/cart/items",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items"
+              ]
+            },
+            "description": "Validates insufficient available stock handling for cart additions.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{PRODUCT_ID}},\n  \"quantity\": 999999\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "item": [
+        {
+          "name": "Checkout Cart",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (!pm.collectionVariables.get('CART_ID')) {",
+                  "    throw new Error('Run Cart / Add Item To Cart before checkout.');",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "pm.collectionVariables.set('ORDER_ID', response.data.id);",
+                  "pm.collectionVariables.set('ORDER_NUMBER', response.data.orderNumber);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/orders/checkout",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "checkout"
+              ]
+            },
+            "description": "Creates a confirmed order from the current cart, reserves inventory, and clears the cart.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cartId\": {{CART_ID}}\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order By ID",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (!pm.collectionVariables.get('ORDER_ID')) {",
+                  "    throw new Error('Run Order / Checkout Cart before retrieving an order.');",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/orders/{{ORDER_ID}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "{{ORDER_ID}}"
+              ]
+            },
+            "description": "Retrieves a confirmed order with its item snapshots."
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Order",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (!pm.collectionVariables.get('ORDER_ID')) {",
+                  "    throw new Error('Run Order / Checkout Cart before cancelling an order.');",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/orders/{{ORDER_ID}}/cancel",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "{{ORDER_ID}}",
+                "cancel"
+              ]
+            },
+            "description": "Cancels a confirmed order and releases its reserved inventory."
+          },
+          "response": []
+        },
+        {
+          "name": "Checkout Cart - Not Found",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/orders/checkout",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "checkout"
+              ]
+            },
+            "description": "Verifies not-found behavior for checkout with an unknown cart id.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cartId\": {{NON_EXISTING_CART_ID}}\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Order - Already Cancelled",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/orders/{{ORDER_ID}}/cancel",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "{{ORDER_ID}}",
+                "cancel"
+              ]
+            },
+            "description": "Run after Cancel Order to verify that an already cancelled order cannot be cancelled again."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.collectionVariables.set('NON_EXISTING_CATEGORY_ID', pm.collectionVariables.get('NON_EXISTING_CATEGORY_ID') || '999999999');",
+          "pm.collectionVariables.set('NON_EXISTING_PRODUCT_ID', pm.collectionVariables.get('NON_EXISTING_PRODUCT_ID') || '999999999');",
+          "pm.collectionVariables.set('NON_EXISTING_CART_ID', pm.collectionVariables.get('NON_EXISTING_CART_ID') || '999999999');",
+          "pm.collectionVariables.set('NON_EXISTING_ORDER_ID', pm.collectionVariables.get('NON_EXISTING_ORDER_ID') || '999999999');"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "CATEGORY_ID",
+      "value": ""
+    },
+    {
+      "key": "CATEGORY_NAME",
+      "value": "Premium Home Appliances"
+    },
+    {
+      "key": "CATEGORY_CODE",
+      "value": ""
+    },
+    {
+      "key": "UPDATED_CATEGORY_NAME",
+      "value": "Smart Home Appliances"
+    },
+    {
+      "key": "NON_EXISTING_CATEGORY_ID",
+      "value": "999999999"
+    },
+    {
+      "key": "PRODUCT_ID",
+      "value": ""
+    },
+    {
+      "key": "PRODUCT_SKU",
+      "value": ""
+    },
+    {
+      "key": "PRODUCT_NAME",
+      "value": "Smart Stainless Steel Kettle"
+    },
+    {
+      "key": "UPDATED_PRODUCT_NAME",
+      "value": "Smart Stainless Steel Kettle Pro"
+    },
+    {
+      "key": "NON_EXISTING_PRODUCT_ID",
+      "value": "999999999"
+    },
+    {
+      "key": "INVENTORY_ID",
+      "value": ""
+    },
+    {
+      "key": "INVENTORY_PRODUCT_ID",
+      "value": ""
+    },
+    {
+      "key": "CART_ID",
+      "value": ""
+    },
+    {
+      "key": "ORDER_ID",
+      "value": ""
+    },
+    {
+      "key": "ORDER_NUMBER",
+      "value": ""
+    },
+    {
+      "key": "NON_EXISTING_CART_ID",
+      "value": "999999999"
+    },
+    {
+      "key": "NON_EXISTING_ORDER_ID",
+      "value": "999999999"
+    }
+  ]
+}
